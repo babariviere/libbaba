@@ -6,4 +6,6 @@
 #define OK	1
 #define ERR	0
 
+#define LEN(x) (sizeof(x) / sizeof(x[0]))
+
 #endif

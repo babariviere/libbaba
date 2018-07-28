@@ -18,7 +18,7 @@ s_buf	*buf_new(size_t item_size) {
 
 int		buf_push(s_buf *buf, const void *elem) {
 	if ((buf->len + 1) >= buf->allocated)
-		if (!buf_realloc(buf, (buf->allocated == 0 ? 8 : buf->allocated * 2)))
+		if (!buf_realloc(buf, (buf->allocated == 0 ? BUF_ALLOC : buf->allocated * 2)))
 			return ERR;
 	memcpy(buf->data + (buf->len * buf->item_size), elem, buf->item_size);
 	buf->len += 1;
@@ -38,8 +38,24 @@ void	*buf_pop(s_buf *buf) {
 	return res;
 }
 
+int		buf_extend(s_buf *buf1, s_buf *buf2) {
+	size_t	total_len = buf1->len + buf2->len;
+	size_t	new_allocated = buf1->allocated == 0 ? BUF_ALLOC : buf1->allocated;
+	while (new_allocated < total_len)
+		new_allocated *= 2;
+	if (new_allocated != buf1->allocated) {
+		 if (buf_realloc(buf1, new_allocated) == ERR)
+			 return ERR;
+	}
+	memcpy(buf1->data + (buf1->len * buf1->item_size), buf2->data, (buf2->len * buf2->item_size));
+	buf1->len = total_len;
+	buf_del(buf2);
+	return OK;
+}
+
 int		buf_realloc(s_buf *buf, size_t new_size) {
 	buf->data = realloc(buf->data, new_size * buf->item_size);
+	buf->allocated = new_size;
 	return buf->data != 0;
 }
 
