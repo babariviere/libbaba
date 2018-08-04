@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include "test.h"
 
+struct ab {
+	int		a;
+	int		b;
+};
+
 int		test_basic() {
 	s_buf	*buf;
 	int		val[] = {10, 20, 30};
@@ -53,8 +58,35 @@ int		test_extend() {
 	return OK;
 }
 
+int		test_setsize() {
+	s_buf	*buf;
+	struct ab ab = {.a = 10, .b = 20};
+
+	buf = buf_new(sizeof(struct ab));
+	if (!buf)
+		return ERR;
+	buf_push(buf, &ab);
+	buf_setsize(buf, sizeof(int));
+	if (buf->len != 2)
+		return ERR;
+	int *b = buf_pop(buf);
+	int *a = buf_pop(buf);
+	if (!a || !b)
+		return ERR;
+	if (*b != 20)
+		return ERR;
+	if (*a != 10)
+		return ERR;
+	buf_del(buf);;
+	free(buf);
+	free(a);
+	free(b);
+	return OK;
+}
+
 int		main() {
 	TEST(test_basic);
 	TEST(test_extend);
+	TEST(test_setsize);
 	return 0;
 }

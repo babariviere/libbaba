@@ -28,7 +28,7 @@ clean:
 	@rm -rf obj
 
 fclean: clean
-	@rm $(NAME).a
+	@rm -f $(NAME).a
 
 re: fclean all
 

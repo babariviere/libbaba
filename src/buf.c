@@ -38,6 +38,12 @@ void	*buf_pop(s_buf *buf) {
 	return res;
 }
 
+void	buf_setsize(s_buf *buf, size_t new_size) {
+	size_t	new_len = (buf->item_size * buf->len) / new_size;
+	buf->len = new_len;
+	buf->item_size = new_size;
+}
+
 int		buf_extend(s_buf *buf1, s_buf *buf2) {
 	size_t	total_len = buf1->len + buf2->len;
 	size_t	new_allocated = buf1->allocated == 0 ? BUF_ALLOC : buf1->allocated;
